@@ -8,9 +8,12 @@ describe("Report generation", () => {
     const calls: Array<{ url: string; init: RequestInit | undefined }> = [];
 
     globalThis.fetch = async (input, init) => {
-      const url = typeof input === "string" ? input : input.url;
-      calls.push({ url, init });
-
+      const url =
+        input instanceof Request
+          ? input.url
+          : input instanceof URL
+            ? input.href
+            : input;
       if (url.includes("/channels/000000000000000000/messages")) {
         return new Response(JSON.stringify([]), {
           status: 200,
